@@ -1,5 +1,5 @@
 import log from './utils/logger';
-import { ArgumentError } from './errors';
+import { JsonApiArgumentError } from './errors';
 import axios from 'axios';
 import JsonApiModel, {
     JsonApiDocument,
@@ -19,24 +19,24 @@ import JsonApiModel, {
  * @param {string} [options.basepath=] - The root path of the API
  * @param {number} [optoins.timeout=30000] - Client timeout in milliseconds
  */
-class JsonApiClient {
+export default class JsonApiClient {
     #options;
     #baseUrl;
 
     constructor( options ) {
         //must be provided an options object
         if ( typeof options === 'undefined' ) {
-            throw new ArgumentError( 'an options object must be passed as the first argument' );
+            throw new JsonApiArgumentError( 'an options object must be passed as the first argument' );
         }
 
         //provided options must be an object
         if ( typeof options !== 'object' ) {
-            throw new ArgumentError( 'first argument must be an object containing valid options' );
+            throw new JsonApiArgumentError( 'first argument must be an object containing valid options' );
         }
 
         //must be provided a host or there is no API to connect to
         if ( ! options.host ) {
-            throw new ArgumentError( 'no host specified' );
+            throw new JsonApiArgumentError( 'no host specified' );
         }
         
         //set default options and allow to be overridden with provided options
@@ -67,9 +67,60 @@ class JsonApiClient {
 
         return options;
     }
+
+    /**
+     * Fetch remote object and return it as a JsonApiDocument
+     * 
+     * @param {string} path 
+     * @returns {Promise<JsonApiDocument>}
+     */
+    async get( path ) {
+        let axiosOptions = {};
+        this.#options.timeout ? axiosOptions.timeout = this.#options.timeout : 30000;
+        if ( this.#options.auth ) {
+            axiosOptions.auth = {
+                username: this.#options.auth.username,
+                password: this.#options.auth.password,
+            };
+        }
+        
+        let document = axios.get( this.#baseUrl.concat( path ), axiosOptions )
+        .then( ( res ) => {
+            let document = new JsonApiDocument( res.data );
+            
+            return document;
+        })
+        .catch( ( err ) => {
+            if ( err.response ) {
+                switch ( err.response.status ) {
+                    case 401:
+                        log.warn( 'Not authorized.');
+                        break;
+                    case 404:
+                        log.warn( 'Unable to find object.' );
+                        break;
+                    case 500:
+                        log.warn( 'Remote server returned an error.' );
+                        break;
+                    default:
+                        log.warn( 'An unknown error occurred.' );
+                        break;
+                }
+            } else if ( err.message && err.message.toLowerCase().startsWith( "timeout" ) ) {
+                log.warn( 'Remote server was unreachable' );
+            } else {
+                log.warn( 'An unknown error occurred.' );
+            }
+
+            log.warn( err.message );
+        })
+        .finally( () => {
+        });
+
+        return document;
+    }
 }
 
-export default JsonApiClient;
 export {
     JsonApiModel,
     JsonApiDocument,
