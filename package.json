@@ -1,10 +1,15 @@
 {
-  "name": "jsonapi-client",
+  "name": "@gridironsolutions/jsonapi-client",
   "version": "0.1.0",
   "description": "JSON:API client",
   "main": "src/index.js",
-  "repository": "https://github.com/gridironsolutions/jsonapi-client.git",
+  "repository": {
+    "url": "https://github.com/gridironsolutions/jsonapi-client",
+    "type": "git"
+  },
   "author": "Tom Voss <tom.voss@gridironsolutions.com>",
+  "homepage": "https://github.com/gridironsolutions/jsonapi-client",
+  "bugs": "https://github.com/gridironsolutions/jsonapi-client/issues",
   "license": "UNLICENSED",
   "type": "module",
   "private": false,
