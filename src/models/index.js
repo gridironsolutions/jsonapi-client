@@ -6,7 +6,7 @@ import JsonApiMeta from './JsonApiMeta';
 import JsonApiResource from './JsonApiResource';
 
 export default JsonApiModel;
-export default {
+export {
     JsonApiDocument,
     JsonApiObject,
     JsonApiError,
