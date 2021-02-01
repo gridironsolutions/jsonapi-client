@@ -1,7 +1,7 @@
-import ClientError from './JsonApiClientError';
-import ArgumentError from './JsonApiArgumentError';
+import JsonApiClientError from './JsonApiClientError';
+import JsonApiArgumentError from './JsonApiArgumentError';
 
-export default ClientError;
+export default JsonApiClientError;
 export {
-    ArgumentError,
+    JsonApiArgumentError,
 };
