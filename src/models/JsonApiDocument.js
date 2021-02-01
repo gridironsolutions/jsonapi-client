@@ -1,6 +1,7 @@
 import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
 import { ArgumentError } from '../errors';
+import { JsonApiResource } from '.';
 
 /**
  * A JSON:API-compliant document object
@@ -12,6 +13,7 @@ import { ArgumentError } from '../errors';
  * @param {Object} [document.meta]
  * @param {Object} [document.links]
  * @param {Object[]} [document.included]
+ * @param {Object} [model=JsonApiResource]
  */
 export default class JsonApiDocument extends JsonApiModel {
     #jsonapi;
@@ -21,8 +23,10 @@ export default class JsonApiDocument extends JsonApiModel {
     #links;
     #included;
     #isValid = false;
+    #_deserialized = false;
+    #resources;
 
-    constructor( document ) {
+    constructor( document, model = JsonApiResource ) {
         super();
 
         if ( ! document ) {
@@ -44,6 +48,7 @@ export default class JsonApiDocument extends JsonApiModel {
         this.#links = document.links;
         this.#included = document.included;
         this.#isValid = true;
+        this.#deserialize( model );
     }
 
     getJsonApiObject() {
@@ -80,5 +85,37 @@ export default class JsonApiDocument extends JsonApiModel {
 
     isValid() {
         return this.#isValid;
+    }
+
+    getResources() {
+        return this.#resources;
+    }
+
+    #deserialize( model = JsonApiResource ) {
+        if ( ! this.#errors && this.#data && ! this.#_deserialized ) {
+            if ( Array.isArray( this.#data ) ) {
+                this.#resources = this.#data.map( ( element ) => {
+                    let resource;
+
+                    if ( model ) {
+                        resource = new model( element );
+                    } else {
+                        resource = new JsonApiResource( element );
+                    }
+
+                    return resource;
+                });
+            } else {
+                if ( model ) {
+                    this.#resources = new model( this.#data );
+                } else {
+                    this.#resources = new JsonApiResource( this.#data );
+                }
+            }
+
+            this.#_deserialized = true;
+        }
+
+        return;
     }
 }
