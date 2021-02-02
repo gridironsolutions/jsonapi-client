@@ -1,8 +1,8 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "JSON:API client",
-  "main": "./build/jsonapi-client.js",
+  "main": "./build/jsonapi-client.cjs",
   "repository": {
     "url": "https://github.com/gridironsolutions/jsonapi-client",
     "type": "git"
