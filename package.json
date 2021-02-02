@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "JSON:API client",
   "main": "src/index.js",
   "repository": {
@@ -38,6 +38,6 @@
     "webpack-merge": "^5.7.3"
   },
   "files": [
-    "src/*"
+    "build/*"
   ]
 }
