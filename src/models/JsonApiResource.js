@@ -1,5 +1,5 @@
 import JsonApiModel from './JsonApiModel';
-import { ArgumentError } from '../errors';
+import { JsonApiArgumentError } from '../errors';
 
 /**
  * A JSON:API-compliant resource object
@@ -22,7 +22,7 @@ export default class JsonApiResource extends JsonApiModel {
             this.#id = resource.id;
             this.#attributes = resource.attributes;
         } else {
-            throw new ArgumentError( "Provided resource is invalid." );
+            throw new JsonApiArgumentError( "Provided resource is invalid." );
         }
     }
 

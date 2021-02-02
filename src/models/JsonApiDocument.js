@@ -1,6 +1,6 @@
 import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
-import { ArgumentError } from '../errors';
+import { JsonApiArgumentError } from '../errors';
 import { JsonApiResource } from '.';
 
 /**
@@ -30,15 +30,15 @@ export default class JsonApiDocument extends JsonApiModel {
         super();
 
         if ( ! document ) {
-            throw new ArgumentError( "Provided document is invalid." );
+            throw new JsonApiArgumentError( "Provided document is invalid." );
         }
 
         if ( ! document.data && ! document.errors && ! document.meta ) {
-            throw new ArgumentError( "Provided document is invalid. It must contain at least one of `data`, `errors`, or `meta`." );
+            throw new JsonApiArgumentError( "Provided document is invalid. It must contain at least one of `data`, `errors`, or `meta`." );
         }
 
         if ( ! document.data && document.included ) {
-            throw new ArgumentError( "Provided document is invalid. `data` must be present if `included` is present." );
+            throw new JsonApiArgumentError( "Provided document is invalid. `data` must be present if `included` is present." );
         }
 
         this.#jsonapi = document.jsonapi ? document.jsonapi : new JsonApiObject();
