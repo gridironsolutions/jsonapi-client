@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "JSON:API client",
   "main": "./build/jsonapi-client.js",
   "module": "./build/jsonapi-client.js",
