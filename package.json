@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "JSON:API client",
   "main": "./build/jsonapi-client.js",
   "module": "./build/jsonapi-client.js",
@@ -22,7 +22,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
-    "pino": "^6.11.0"
+    "pino": "^6.11.0",
+    "pino-pretty": "^4.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
