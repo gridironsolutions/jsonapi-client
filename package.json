@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "description": "JSON:API client",
   "main": "esm/index.js",
   "module": "esm/index.js",
@@ -46,6 +46,7 @@
     "jest": "^26.6.3",
     "jest-extended": "^0.11.5",
     "rollup": "^2.39.0",
+    "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-execute": "^1.1.1",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
@@ -55,9 +56,9 @@
     "webpack-merge": "^5.7.3"
   },
   "files": [
-    "build/@gridironsolutions",
-    "build/commonjs",
-    "build/esm",
+    "@gridironsolutions",
+    "commonjs",
+    "esm",
     "package.json"
   ]
 }
