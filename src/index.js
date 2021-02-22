@@ -1,6 +1,6 @@
 import log from './utils/logger';
-import { JsonApiArgumentError } from './errors';
 import axios from 'axios';
+import JsonApiClientError, { JsonApiArgumentError } from './errors';
 import JsonApiModel, {
     JsonApiDocument,
     JsonApiObject,
@@ -122,10 +122,13 @@ export default class JsonApiClient {
 }
 
 export {
+    JsonApiClient,
     JsonApiModel,
     JsonApiDocument,
     JsonApiObject,
     JsonApiError,
     JsonApiMeta,
-    JsonApiResource
+    JsonApiResource,
+    JsonApiClientError,
+    JsonApiArgumentError,
 };

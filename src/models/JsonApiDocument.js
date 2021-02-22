@@ -1,7 +1,7 @@
 import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
+import JsonApiResource from './JsonApiResource';
 import { JsonApiArgumentError } from '../errors';
-import { JsonApiResource } from '.';
 
 /**
  * A JSON:API-compliant document object
