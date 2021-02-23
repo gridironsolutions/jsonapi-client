@@ -72,9 +72,10 @@ export default class JsonApiClient {
      * Fetch remote object and return it as a JsonApiDocument
      * 
      * @param {string} path 
+     * @param {Object} [model=JsonApiResource]
      * @returns {Promise<JsonApiDocument>}
      */
-    async get( path ) {
+    async get( path, model = JsonApiResource ) {
         let axiosOptions = {};
         this.#options.timeout ? axiosOptions.timeout = this.#options.timeout : 30000;
         if ( this.#options.auth ) {
@@ -86,7 +87,7 @@ export default class JsonApiClient {
         
         let document = axios.get( this.#baseUrl.concat( path ), axiosOptions )
         .then( ( res ) => {
-            let document = new JsonApiDocument( res.data );
+            let document = new JsonApiDocument( res.data, model );
             
             return document;
         })
