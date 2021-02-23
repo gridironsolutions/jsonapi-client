@@ -12,6 +12,7 @@ import autoExternal from 'rollup-plugin-auto-external';
 import pkg from "./package.json";
 
 const input = ['src/index.js'];
+
 const banner =
 `/*
  * ${pkg.name}
@@ -21,6 +22,13 @@ const banner =
  * ${pkg.license} License
  */
 `;
+
+const acornPlugins = [
+    acf,
+    ascf,
+    apm,
+];
+
 
 export default [
     //UMD
@@ -53,11 +61,10 @@ export default [
         ],
     },
 
-    //ESM and CJS
+    //ESM
     {
         input,
         output: [
-            //ESM
             {
                 file: `build/esm/index.js`,
                 format: 'esm',
@@ -65,8 +72,26 @@ export default [
                 sourcemap: true,
                 banner: banner,
             },
+        ],
+        plugins: [
+            autoExternal(),
+            nodeResolve({
+                preferBuiltins: true,
+            }),
+            babel({
+                babelHelpers: 'runtime',
+            }),
+            commonjs(),
+            json(),
+            terser(),
+        ],
+        acornInjectPlugins: acornPlugins
+    },
 
-            //CJS
+    //CJS
+    {
+        input,
+        output: [
             {
                 file: `build/commonjs/index.js`,
                 format: 'cjs',
@@ -90,12 +115,9 @@ export default [
                 'printf "{\n  \\"type\\": \\"commonjs\\"\n}" > ./build/commonjs/package.json',
                 'yarn version --patch',
                 'cp ./package.json ./build/package.json',
-            ]),
+                'cp ./README.md ./build/README.md',
+            ]),        
         ],
-        acornInjectPlugins: [
-            acf,
-            ascf,
-            apm,
-        ]
+        acornInjectPlugins: acornPlugins
     }
 ];
