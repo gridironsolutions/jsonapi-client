@@ -18,7 +18,19 @@ export default class JsonApiResource extends JsonApiModel {
         super();
 
         if ( resource ) {
-            this.#type = resource.type;
+            if ( ! this._type ) {
+                throw new JsonApiArgumentError( "Subclass must specify its type by setting its _type property." );
+            }
+
+            if ( resource.type && resource.type !== this._type ) {
+                throw new JsonApiArgumentError( "Resource is incompatible with this class" );
+            }
+
+            if ( ! resource.id ) {
+                throw new JsonApiArgumentError( "Resource must have an id." );
+            }
+
+            this.#type = this._type;
             this.#id = resource.id;
             this.#attributes = resource.attributes;
         } else {
