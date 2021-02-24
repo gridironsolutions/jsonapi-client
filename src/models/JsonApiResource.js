@@ -26,6 +26,27 @@ export default class JsonApiResource extends JsonApiModel {
         }
     }
 
+    /**
+     * Build a new JsonApiResource
+     * 
+     * @param {string} type 
+     * @param {string} id 
+     * @param {Object} attributes 
+     * 
+     * @returns {JsonApiResource}
+     */
+    static from( type, id, attributes ) {
+        if ( ! type || ! id || ! attributes ) {
+            throw new JsonApiArgumentError( "Must provide valid type, id, and attributes." );
+        }
+
+        return new this({
+            type,
+            id,
+            attributes
+        });
+    }
+
     toString() {
         let str = '[object '.concat( this.constructor.name );
         let id = '';
