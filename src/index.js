@@ -22,6 +22,7 @@ import JsonApiModel, {
 export default class JsonApiClient {
     #options;
     #baseUrl;
+    #axiosOptions;
 
     constructor( options ) {
         //must be provided an options object
@@ -50,6 +51,17 @@ export default class JsonApiClient {
 
         //assemble options into baseUrl
         this.#baseUrl = `${(this.#options.https ? 'https' : 'http')}://${this.#options.host}:${this.#options.port}/${this.#options.basePath}`;
+
+        //set axios options
+        this.#axiosOptions = {
+            timeout: this.#options.timeout,
+        };
+        if ( this.#options.auth ) {
+            this.#axiosOptions.auth = {
+                username: this.#options.auth.username,
+                password: this.#options.auth.password,
+            };
+        }
     }
 
     /**
@@ -76,49 +88,44 @@ export default class JsonApiClient {
      * @returns {Promise<JsonApiDocument>}
      */
     async get( path, model = JsonApiResource ) {
-        let axiosOptions = {};
-        this.#options.timeout ? axiosOptions.timeout = this.#options.timeout : 30000;
-        if ( this.#options.auth ) {
-            axiosOptions.auth = {
-                username: this.#options.auth.username,
-                password: this.#options.auth.password,
-            };
-        }
-        
-        let document = axios.get( this.#baseUrl.concat( path ), axiosOptions )
+        let document = axios.get( this.#baseUrl.concat( path ), this.#axiosOptions )
         .then( ( res ) => {
             let document = new JsonApiDocument( res.data, model );
             
             return document;
         })
         .catch( ( err ) => {
-            if ( err.response ) {
-                switch ( err.response.status ) {
-                    case 401:
-                        log.warn( 'Not authorized.');
-                        break;
-                    case 404:
-                        log.warn( 'Unable to find object.' );
-                        break;
-                    case 500:
-                        log.warn( 'Remote server returned an error.' );
-                        break;
-                    default:
-                        log.warn( 'An unknown error occurred.' );
-                        break;
-                }
-            } else if ( err.message && err.message.toLowerCase().startsWith( "timeout" ) ) {
-                log.warn( 'Remote server was unreachable' );
-            } else {
-                log.warn( 'An unknown error occurred.' );
-            }
-
-            log.warn( err.message );
+            this.#handleError( err );
         })
         .finally( () => {
         });
 
         return document;
+    }
+
+    #handleError( err ) {
+        if ( err.response ) {
+            switch ( err.response.status ) {
+                case 401:
+                    log.warn( 'Not authorized.');
+                    break;
+                case 404:
+                    log.warn( 'Unable to find object.' );
+                    break;
+                case 500:
+                    log.warn( 'Remote server returned an error.' );
+                    break;
+                default:
+                    log.warn( 'An unknown error occurred.' );
+                    break;
+            }
+        } else if ( err.message && err.message.toLowerCase().startsWith( "timeout" ) ) {
+            log.warn( 'Remote server was unreachable' );
+        } else {
+            log.warn( 'An unknown error occurred.' );
+        }
+
+        log.warn( err.message );
     }
 }
 
