@@ -1,6 +1,6 @@
 import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
-import JsonApiResource from './JsonApiResource';
+import UntypedResource from './UntypedResource';
 import { JsonApiArgumentError } from '../errors';
 
 /**
@@ -13,7 +13,7 @@ import { JsonApiArgumentError } from '../errors';
  * @param {Object} [document.meta]
  * @param {Object} [document.links]
  * @param {Object[]} [document.included]
- * @param {Object} [model=JsonApiResource]
+ * @param {Object} [model=UntypedResource]
  */
 export default class JsonApiDocument extends JsonApiModel {
     #jsonapi;
@@ -26,7 +26,7 @@ export default class JsonApiDocument extends JsonApiModel {
     #_deserialized = false;
     #resources;
 
-    constructor( document, model = JsonApiResource ) {
+    constructor( document, model = UntypedResource ) {
         super();
 
         if ( ! document ) {
@@ -91,7 +91,7 @@ export default class JsonApiDocument extends JsonApiModel {
         return this.#resources;
     }
 
-    #deserialize( model = JsonApiResource ) {
+    #deserialize( model = UntypedResource ) {
         if ( ! this.#errors && this.#data && ! this.#_deserialized ) {
             if ( Array.isArray( this.#data ) ) {
                 this.#resources = this.#data.map( ( element ) => {
@@ -100,7 +100,7 @@ export default class JsonApiDocument extends JsonApiModel {
                     if ( model ) {
                         resource = new model( element );
                     } else {
-                        resource = new JsonApiResource( element );
+                        resource = new UntypedResource( element );
                     }
 
                     return resource;
@@ -109,7 +109,7 @@ export default class JsonApiDocument extends JsonApiModel {
                 if ( model ) {
                     this.#resources = new model( this.#data );
                 } else {
-                    this.#resources = new JsonApiResource( this.#data );
+                    this.#resources = new UntypedResource( this.#data );
                 }
             }
 

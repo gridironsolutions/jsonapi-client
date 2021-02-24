@@ -6,7 +6,8 @@ import JsonApiModel, {
     JsonApiObject,
     JsonApiError,
     JsonApiMeta,
-    JsonApiResource
+    JsonApiResource,
+    UntypedResource,
 } from './models';
 
 /**
@@ -84,10 +85,10 @@ export default class JsonApiClient {
      * Fetch remote object and return it as a JsonApiDocument
      * 
      * @param {string} path 
-     * @param {Object} [model=JsonApiResource]
+     * @param {Object} [model=UntypedResource]
      * @returns {Promise<JsonApiDocument>}
      */
-    async get( path, model = JsonApiResource ) {
+    async get( path, model = UntypedResource ) {
         let document = axios.get( this.#baseUrl.concat( path ), this.#axiosOptions )
         .then( ( res ) => {
             let document = new JsonApiDocument( res.data, model );
@@ -137,6 +138,7 @@ export {
     JsonApiError,
     JsonApiMeta,
     JsonApiResource,
+    UntypedResource,
     JsonApiClientError,
     JsonApiArgumentError,
 };
