@@ -1,4 +1,5 @@
 import JsonApiModel from './JsonApiModel';
+import UntypedResource from './UntypedResource';
 import { JsonApiArgumentError } from '../errors';
 
 /**
@@ -14,15 +15,15 @@ export default class JsonApiResource extends JsonApiModel {
     #id;
     #attributes;
 
-    constructor( resource ) {
+    constructor( resource, type = UntypedResource ) {
         super();
 
         if ( resource ) {
-            if ( ! this._type ) {
-                throw new JsonApiArgumentError( "Subclass must specify its type by setting its _type property." );
+            if ( ! type ) {
+                throw new JsonApiArgumentError( "Subclass must provide a 'type' argument." );
             }
 
-            if ( resource.type && resource.type !== this._type ) {
+            if ( resource.type && resource.type !== type ) {
                 throw new JsonApiArgumentError( "Resource is incompatible with this class" );
             }
 
@@ -47,13 +48,16 @@ export default class JsonApiResource extends JsonApiModel {
      * 
      * @returns {JsonApiResource}
      */
-    static from( type, id, attributes ) {
-        if ( ! type || ! id || ! attributes ) {
-            throw new JsonApiArgumentError( "Must provide valid type, id, and attributes." );
+    static from( id, attributes ) {
+        if ( ! id ) {
+            throw new JsonApiArgumentError( "Must provide valid id." );
+        }
+
+        if ( ! attributes ) {
+            throw new JsonApiArgumentError( "Must provide valid attributes." );
         }
 
         return new this({
-            type,
             id,
             attributes
         });
