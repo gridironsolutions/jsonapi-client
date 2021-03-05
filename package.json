@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.2.46",
+  "version": "0.2.47",
   "description": "JSON:API client",
   "main": "esm/index.js",
   "module": "esm/index.js",
