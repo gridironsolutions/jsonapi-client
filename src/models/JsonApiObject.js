@@ -12,6 +12,8 @@ export default class JsonApiObject extends JsonApiModel {
     #meta;
 
     constructor( version = this.#CURRENT_VERSION, meta ) {
+        super();
+        
         this.#version = version;
         this.#meta = meta;
     }
