@@ -83,7 +83,9 @@ export default [
             }),
             commonjs(),
             json(),
-            terser(),
+            terser({
+                keep_classnames: true,
+            }),
         ],
         acornInjectPlugins: acornPlugins
     },
@@ -110,7 +112,9 @@ export default [
             }),
             commonjs(),
             json(),
-            terser(),
+            terser({
+                keep_classnames: true,
+            }),
             execute([
                 'yarn version --patch',
                 'cp ./package.json ./build/package.json',
