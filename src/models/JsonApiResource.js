@@ -1,6 +1,6 @@
 import JsonApiModel from './JsonApiModel';
-import UntypedResource from './UntypedResource';
-import { JsonApiArgumentError } from '../errors';
+import JsonApiDocument from './JsonApiDocument';
+import JsonApiClientError, { JsonApiArgumentError } from '../errors';
 
 /**
  * A JSON:API-compliant resource object
@@ -15,23 +15,23 @@ export default class JsonApiResource extends JsonApiModel {
     #id;
     #attributes;
 
-    constructor( resource, type = UntypedResource ) {
+    constructor( resource ) {
         super();
 
         if ( resource ) {
-            if ( ! type ) {
-                throw new JsonApiArgumentError( "Subclass must provide a 'type' argument." );
+            if ( ! this.constructor.type ) {
+                throw new JsonApiArgumentError( "Implementing class must set a 'type' property." );
             }
 
-            if ( resource.type && resource.type !== type ) {
-                throw new JsonApiArgumentError( "Resource is incompatible with this class" );
+            if ( resource.type && resource.type !== this.constructor.type ) {
+                throw new JsonApiArgumentError( `Resource with type '${resource.type}' is incompatible with this '${this.constructor.type}' resource.` );
             }
 
             if ( ! resource.id ) {
                 throw new JsonApiArgumentError( "Resource must have an id." );
             }
 
-            this.#type = this._type;
+            this.#type = this.constructor.type;
             this.#id = resource.id;
             this.#attributes = resource.attributes;
         } else {
@@ -42,13 +42,16 @@ export default class JsonApiResource extends JsonApiModel {
     /**
      * Build a new JsonApiResource
      * 
-     * @param {string} type 
      * @param {string} id 
      * @param {Object} attributes 
      * 
      * @returns {JsonApiResource}
      */
     static from( id, attributes ) {
+        if ( ! this.type ) {
+            throw new JsonApiClientError( `'${this.name}' class does not define a static 'type'.` );
+        }
+
         if ( ! id ) {
             throw new JsonApiArgumentError( "Must provide valid id." );
         }
@@ -58,9 +61,39 @@ export default class JsonApiResource extends JsonApiModel {
         }
 
         return new this({
+            type: this.type,
             id,
             attributes
         });
+    }
+
+    /**
+     * Wrap this resource in a JsonApiDocument
+     * 
+     * @returns {JsonApiDocument}
+     */
+    toJsonApiDocument() {
+        let document = new JsonApiDocument({
+            data: {
+                type: this.constructor.type,
+                id: this.#id,
+                attributes: this.#attributes,
+            }
+        }, this.constructor );
+
+        return document;
+    }
+
+    getType() {
+        return this.#type;
+    }
+
+    getId() {
+        return this.#id;
+    }
+
+    getAttributes() {
+        return this.#attributes;
     }
 
     toString() {
@@ -76,16 +109,12 @@ export default class JsonApiResource extends JsonApiModel {
 
         return str;
     }
-    
-    getType() {
-        return this.#type;
-    }
 
-    getId() {
-        return this.#id;
-    }
-
-    getAttributes() {
-        return this.#attributes;
+    toJSON() {
+        return {
+            type: this.#type,
+            id: this.#id,
+            attributes: this.#attributes,
+        };
     }
 }
