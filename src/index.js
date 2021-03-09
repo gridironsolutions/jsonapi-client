@@ -122,7 +122,7 @@ export default class JsonApiClient {
 
         let reqDocument = resource.toJsonApiDocument();
 
-        let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument.toDocument(), this.#axiosOptions )
+        let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument, this.#axiosOptions )
         .then( ( res ) => {
             let document = new JsonApiDocument( res.data, resource.constructor );
 
