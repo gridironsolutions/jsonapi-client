@@ -56,6 +56,10 @@ export default class JsonApiClient {
         //set axios options
         this.#axiosOptions = {
             timeout: this.#options.timeout,
+            headers: {
+                'Content-Type': 'application/vnd.api+json',
+                'Accept': 'application/vnp.api+json',
+            },
         };
         if ( this.#options.auth ) {
             this.#axiosOptions.auth = {
@@ -102,6 +106,35 @@ export default class JsonApiClient {
         });
 
         return document;
+    }
+
+    /**
+     * Update remote object
+     * 
+     * @param {string} path 
+     * @param {Object} resource
+     * @returns {Promise<JsonApiDocument}
+     */
+    async patch( path, resource ) {
+        if ( ! resource.getAttributes() ) {
+            throw new JsonApiError( "Resource does not have any attributes." );
+        }
+
+        let reqDocument = resource.toJsonApiDocument();
+
+        let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument.toDocument(), this.#axiosOptions )
+        .then( ( res ) => {
+            let document = new JsonApiDocument( res.data, resource.constructor );
+
+            return document;
+        })
+        .catch( ( err ) => {
+            this.#handleError( err );
+        })
+        .finally( () => {
+        });
+
+        return resDocument;
     }
 
     #handleError( err ) {
