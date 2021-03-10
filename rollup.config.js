@@ -57,7 +57,9 @@ export default [
             }),
             commonjs(),
             json(),
-            terser(),
+            terser({
+                keep_classnames: true,
+            }),
         ],
     },
 
