@@ -3,7 +3,7 @@ import JsonApiModel from './JsonApiModel';
 /**
  * A JSON:API-compliant JSON:API object
  * 
- * @param {string} [version=1.0]
+ * @param {string} [version=JsonApiObject.#CURRENT_VERSION]
  * @param {Object} [meta]
  */
 export default class JsonApiObject extends JsonApiModel {
@@ -11,7 +11,9 @@ export default class JsonApiObject extends JsonApiModel {
     #version;
     #meta;
 
-    constructor( version = this.#CURRENT_VERSION, meta ) {
+    constructor( version = JsonApiObject.#CURRENT_VERSION, meta ) {
+        super();
+        
         this.#version = version;
         this.#meta = meta;
     }
@@ -22,5 +24,12 @@ export default class JsonApiObject extends JsonApiModel {
 
     getMeta() {
         return this.#meta;
+    }
+
+    toJSON() {
+        return {
+            version: this.#version,
+            meta: this.#meta,
+        };
     }
 }

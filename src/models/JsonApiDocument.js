@@ -1,6 +1,6 @@
 import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
-import JsonApiResource from './JsonApiResource';
+import UntypedResource from './UntypedResource';
 import { JsonApiArgumentError } from '../errors';
 
 /**
@@ -13,7 +13,7 @@ import { JsonApiArgumentError } from '../errors';
  * @param {Object} [document.meta]
  * @param {Object} [document.links]
  * @param {Object[]} [document.included]
- * @param {Object} [model=JsonApiResource]
+ * @param {Object} [model=UntypedResource]
  */
 export default class JsonApiDocument extends JsonApiModel {
     #jsonapi;
@@ -25,8 +25,9 @@ export default class JsonApiDocument extends JsonApiModel {
     #isValid = false;
     #_deserialized = false;
     #resources;
+    #resourceType;
 
-    constructor( document, model = JsonApiResource ) {
+    constructor( document, model = UntypedResource ) {
         super();
 
         if ( ! document ) {
@@ -49,6 +50,7 @@ export default class JsonApiDocument extends JsonApiModel {
         this.#included = document.included;
         this.#isValid = true;
         this.#deserialize( model );
+        this.#resourceType = model.name;
     }
 
     getJsonApiObject() {
@@ -91,31 +93,38 @@ export default class JsonApiDocument extends JsonApiModel {
         return this.#resources;
     }
 
-    #deserialize( model = JsonApiResource ) {
+    getResourceType() {
+        return this.#resourceType;
+    }
+
+    #deserialize( model = UntypedResource ) {
         if ( ! this.#errors && this.#data && ! this.#_deserialized ) {
             if ( Array.isArray( this.#data ) ) {
                 this.#resources = this.#data.map( ( element ) => {
                     let resource;
 
-                    if ( model ) {
-                        resource = new model( element );
-                    } else {
-                        resource = new JsonApiResource( element );
-                    }
+                    resource = new model( element );
 
                     return resource;
                 });
             } else {
-                if ( model ) {
-                    this.#resources = new model( this.#data );
-                } else {
-                    this.#resources = new JsonApiResource( this.#data );
-                }
+                this.#resources = new model( this.#data );
             }
 
             this.#_deserialized = true;
         }
 
         return;
+    }
+
+    toJSON() {
+        return {
+            jsonapi: this.#jsonapi,
+            data: this.#data,
+            errors: this.#errors,
+            meta: this.#meta,
+            links: this.#links,
+            included: this.#included,
+        };
     }
 }

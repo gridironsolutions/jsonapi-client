@@ -6,7 +6,8 @@ import JsonApiModel, {
     JsonApiObject,
     JsonApiError,
     JsonApiMeta,
-    JsonApiResource
+    JsonApiResource,
+    UntypedResource,
 } from './models';
 
 /**
@@ -22,6 +23,7 @@ import JsonApiModel, {
 export default class JsonApiClient {
     #options;
     #baseUrl;
+    #axiosOptions;
 
     constructor( options ) {
         //must be provided an options object
@@ -50,6 +52,21 @@ export default class JsonApiClient {
 
         //assemble options into baseUrl
         this.#baseUrl = `${(this.#options.https ? 'https' : 'http')}://${this.#options.host}:${this.#options.port}/${this.#options.basePath}`;
+
+        //set axios options
+        this.#axiosOptions = {
+            timeout: this.#options.timeout,
+            headers: {
+                'Content-Type': 'application/vnd.api+json',
+                'Accept': 'application/vnp.api+json',
+            },
+        };
+        if ( this.#options.auth ) {
+            this.#axiosOptions.auth = {
+                username: this.#options.auth.username,
+                password: this.#options.auth.password,
+            };
+        }
     }
 
     /**
@@ -72,53 +89,77 @@ export default class JsonApiClient {
      * Fetch remote object and return it as a JsonApiDocument
      * 
      * @param {string} path 
-     * @param {Object} [model=JsonApiResource]
+     * @param {Object} [model=UntypedResource]
      * @returns {Promise<JsonApiDocument>}
      */
-    async get( path, model = JsonApiResource ) {
-        let axiosOptions = {};
-        this.#options.timeout ? axiosOptions.timeout = this.#options.timeout : 30000;
-        if ( this.#options.auth ) {
-            axiosOptions.auth = {
-                username: this.#options.auth.username,
-                password: this.#options.auth.password,
-            };
-        }
-        
-        let document = axios.get( this.#baseUrl.concat( path ), axiosOptions )
+    async get( path, model = UntypedResource ) {
+        let document = axios.get( this.#baseUrl.concat( path ), this.#axiosOptions )
         .then( ( res ) => {
             let document = new JsonApiDocument( res.data, model );
             
             return document;
         })
         .catch( ( err ) => {
-            if ( err.response ) {
-                switch ( err.response.status ) {
-                    case 401:
-                        log.warn( 'Not authorized.');
-                        break;
-                    case 404:
-                        log.warn( 'Unable to find object.' );
-                        break;
-                    case 500:
-                        log.warn( 'Remote server returned an error.' );
-                        break;
-                    default:
-                        log.warn( 'An unknown error occurred.' );
-                        break;
-                }
-            } else if ( err.message && err.message.toLowerCase().startsWith( "timeout" ) ) {
-                log.warn( 'Remote server was unreachable' );
-            } else {
-                log.warn( 'An unknown error occurred.' );
-            }
-
-            log.warn( err.message );
+            this.#handleError( err );
         })
         .finally( () => {
         });
 
         return document;
+    }
+
+    /**
+     * Update remote object
+     * 
+     * @param {string} path 
+     * @param {Object} resource
+     * @returns {Promise<JsonApiDocument}
+     */
+    async patch( path, resource ) {
+        if ( ! resource.getAttributes() ) {
+            throw new JsonApiError( "Resource does not have any attributes." );
+        }
+
+        let reqDocument = resource.toJsonApiDocument();
+
+        let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument, this.#axiosOptions )
+        .then( ( res ) => {
+            let document = new JsonApiDocument( res.data, resource.constructor );
+
+            return document;
+        })
+        .catch( ( err ) => {
+            this.#handleError( err );
+        })
+        .finally( () => {
+        });
+
+        return resDocument;
+    }
+
+    #handleError( err ) {
+        if ( err.response ) {
+            switch ( err.response.status ) {
+                case 401:
+                    log.warn( 'Not authorized.');
+                    break;
+                case 404:
+                    log.warn( 'Unable to find object.' );
+                    break;
+                case 500:
+                    log.warn( 'Remote server returned an error.' );
+                    break;
+                default:
+                    log.warn( 'An unknown error occurred.' );
+                    break;
+            }
+        } else if ( err.message && err.message.toLowerCase().startsWith( "timeout" ) ) {
+            log.warn( 'Remote server was unreachable' );
+        } else {
+            log.warn( 'An unknown error occurred.' );
+        }
+
+        log.warn( err.message );
     }
 }
 
@@ -130,6 +171,7 @@ export {
     JsonApiError,
     JsonApiMeta,
     JsonApiResource,
+    UntypedResource,
     JsonApiClientError,
     JsonApiArgumentError,
 };

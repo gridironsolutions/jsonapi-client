@@ -4,6 +4,7 @@ import JsonApiObject from './JsonApiObject';
 import JsonApiError from './JsonApiError';
 import JsonApiMeta from './JsonApiMeta';
 import JsonApiResource from './JsonApiResource';
+import UntypedResource from './UntypedResource';
 
 export default JsonApiModel;
 export {
@@ -11,5 +12,6 @@ export {
     JsonApiObject,
     JsonApiError,
     JsonApiMeta,
-    JsonApiResource
+    JsonApiResource,
+    UntypedResource,
 }

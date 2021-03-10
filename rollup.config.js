@@ -83,7 +83,9 @@ export default [
             }),
             commonjs(),
             json(),
-            terser(),
+            terser({
+                keep_classnames: true,
+            }),
         ],
         acornInjectPlugins: acornPlugins
     },
@@ -110,12 +112,14 @@ export default [
             }),
             commonjs(),
             json(),
-            terser(),
+            terser({
+                keep_classnames: true,
+            }),
             execute([
-                'printf "{\n  \\"type\\": \\"commonjs\\"\n}" > ./build/commonjs/package.json',
                 'yarn version --patch',
                 'cp ./package.json ./build/package.json',
                 'cp ./README.md ./build/README.md',
+                'printf "{\n  \\"type\\": \\"commonjs\\"\n}" > ./build/commonjs/package.json',
             ]),        
         ],
         acornInjectPlugins: acornPlugins

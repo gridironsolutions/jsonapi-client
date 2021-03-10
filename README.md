@@ -7,16 +7,21 @@
     -   [getOptions][3]
     -   [get][4]
         -   [Parameters][5]
--   [JsonApiDocument][6]
-    -   [Parameters][7]
--   [JsonApiError][8]
+    -   [patch][6]
+        -   [Parameters][7]
+-   [JsonApiDocument][8]
     -   [Parameters][9]
--   [JsonApiMeta][10]
--   [JsonApiModel][11]
--   [JsonApiObject][12]
-    -   [Parameters][13]
--   [JsonApiResource][14]
+-   [JsonApiError][10]
+    -   [Parameters][11]
+-   [JsonApiMeta][12]
+-   [JsonApiModel][13]
+-   [JsonApiObject][14]
     -   [Parameters][15]
+-   [JsonApiResource][16]
+    -   [Parameters][17]
+    -   [toJsonApiDocument][18]
+    -   [from][19]
+        -   [Parameters][20]
 
 ## JsonApiClient
 
@@ -24,17 +29,17 @@ JSON:API Client
 
 ### Parameters
 
--   `options` **[Object][16]** Configuration options
-    -   `options.host` **[string][17]** Remote API host
-    -   `options.https` **[string][17]** Is protocol HTTPS or HTTP? (optional, default `true`)
-    -   `options.port` **[number][18]** Remote API port (optional, default `443`)
-    -   `options.basepath` **[string][17]?** The root path of the API
+-   `options` **[Object][21]** Configuration options
+    -   `options.host` **[string][22]** Remote API host
+    -   `options.https` **[string][22]** Is protocol HTTPS or HTTP? (optional, default `true`)
+    -   `options.port` **[number][23]** Remote API port (optional, default `443`)
+    -   `options.basepath` **[string][22]?** The root path of the API
 
 ### getOptions
 
 Get client options
 
-Returns **[Object][16]** 
+Returns **[Object][21]** 
 
 ### get
 
@@ -42,9 +47,19 @@ Fetch remote object and return it as a JsonApiDocument
 
 #### Parameters
 
--   `path` **[string][17]** 
+-   `path` **[string][22]** 
+-   `model` **[Object][21]**  (optional, default `UntypedResource`)
 
-Returns **[Promise][19]&lt;[JsonApiDocument][20]>** 
+Returns **[Promise][24]&lt;[JsonApiDocument][25]>** 
+
+### patch
+
+Update remote object
+
+#### Parameters
+
+-   `path` **[string][22]** 
+-   `resource` **[Object][21]** 
 
 ## JsonApiDocument
 
@@ -54,14 +69,14 @@ A JSON:API-compliant document object
 
 ### Parameters
 
--   `document` **[Object][16]** 
-    -   `document.jsonapi` **[Object][16]**  (optional, default `JsonApiObject.#CURRENT_VERSION`)
-    -   `document.data` **([Object][16] \| [Array][21]&lt;[Object][16]>)?** 
-    -   `document.errors` **[Array][21]&lt;[Object][16]>?** 
-    -   `document.meta` **[Object][16]?** 
-    -   `document.links` **[Object][16]?** 
-    -   `document.included` **[Array][21]&lt;[Object][16]>?** 
--   `model` **[Object][16]**  (optional, default `JsonApiResource`)
+-   `document` **[Object][21]** 
+    -   `document.jsonapi` **[Object][21]**  (optional, default `JsonApiObject.#CURRENT_VERSION`)
+    -   `document.data` **([Object][21] \| [Array][26]&lt;[Object][21]>)?** 
+    -   `document.errors` **[Array][26]&lt;[Object][21]>?** 
+    -   `document.meta` **[Object][21]?** 
+    -   `document.links` **[Object][21]?** 
+    -   `document.included` **[Array][26]&lt;[Object][21]>?** 
+-   `model` **[Object][21]**  (optional, default `UntypedResource`)
 
 ## JsonApiError
 
@@ -71,15 +86,15 @@ A JSON:API-compliant JSON:API object
 
 ### Parameters
 
--   `jsonApiError` **[Object][16]** 
-    -   `jsonApiError.id` **[string][17]?** 
-    -   `jsonApiError.links` **[Object][16]?** 
-    -   `jsonApiError.status` **[string][17]?** 
-    -   `jsonApiError.code` **[string][17]?** 
-    -   `jsonApiError.title` **[string][17]?** 
-    -   `jsonApiError.detail` **[string][17]?** 
-    -   `jsonApiError.source` **[Object][16]?** 
-    -   `jsonApiError.meta` **[Object][16]?** 
+-   `jsonApiError` **[Object][21]** 
+    -   `jsonApiError.id` **[string][22]?** 
+    -   `jsonApiError.links` **[Object][21]?** 
+    -   `jsonApiError.status` **[string][22]?** 
+    -   `jsonApiError.code` **[string][22]?** 
+    -   `jsonApiError.title` **[string][22]?** 
+    -   `jsonApiError.detail` **[string][22]?** 
+    -   `jsonApiError.source` **[Object][21]?** 
+    -   `jsonApiError.meta` **[Object][21]?** 
 
 ## JsonApiMeta
 
@@ -99,8 +114,8 @@ A JSON:API-compliant JSON:API object
 
 ### Parameters
 
--   `version` **[string][17]**  (optional, default `1.0`)
--   `meta` **[Object][16]?** 
+-   `version` **[string][22]**  (optional, default `JsonApiObject.#CURRENT_VERSION`)
+-   `meta` **[Object][21]?** 
 
 ## JsonApiResource
 
@@ -110,10 +125,27 @@ A JSON:API-compliant resource object
 
 ### Parameters
 
--   `resource` **[Object][16]** 
-    -   `resource.type` **[string][17]?** 
-    -   `resource.id` **[string][17]?** 
-    -   `resource.attributes` **[Object][16]?** 
+-   `resource` **[Object][21]** 
+    -   `resource.type` **[string][22]?** 
+    -   `resource.id` **[string][22]?** 
+    -   `resource.attributes` **[Object][21]?** 
+
+### toJsonApiDocument
+
+Wrap this resource in a JsonApiDocument
+
+Returns **[JsonApiDocument][25]** 
+
+### from
+
+Build a new JsonApiResource
+
+#### Parameters
+
+-   `id` **[string][22]** 
+-   `attributes` **[Object][21]** 
+
+Returns **[JsonApiResource][27]** 
 
 [1]: #jsonapiclient
 
@@ -125,34 +157,46 @@ A JSON:API-compliant resource object
 
 [5]: #parameters-1
 
-[6]: #jsonapidocument
+[6]: #patch
 
 [7]: #parameters-2
 
-[8]: #jsonapierror
+[8]: #jsonapidocument
 
 [9]: #parameters-3
 
-[10]: #jsonapimeta
+[10]: #jsonapierror
 
-[11]: #jsonapimodel
+[11]: #parameters-4
 
-[12]: #jsonapiobject
+[12]: #jsonapimeta
 
-[13]: #parameters-4
+[13]: #jsonapimodel
 
-[14]: #jsonapiresource
+[14]: #jsonapiobject
 
 [15]: #parameters-5
 
-[16]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[16]: #jsonapiresource
 
-[17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[17]: #parameters-6
 
-[18]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[18]: #tojsonapidocument
 
-[19]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[19]: #from
 
-[20]: #jsonapidocument
+[20]: #parameters-7
 
-[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[25]: #jsonapidocument
+
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[27]: #jsonapiresource
