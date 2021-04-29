@@ -61,11 +61,28 @@ export default class JsonApiClient {
                 'Accept': 'application/vnp.api+json',
             },
         };
+
+        //add authorization to axios
         if ( this.#options.auth ) {
-            this.#axiosOptions.auth = {
-                username: this.#options.auth.username,
-                password: this.#options.auth.password,
-            };
+            if ( this.#options.auth.username ) {
+                if ( this.#options.auth.password ) {
+                    this.#axiosOptions.auth = {
+                        username: this.#options.auth.username,
+                        password: this.#options.auth.password,
+                    };
+                } else {
+                    this.#axiosOptions.auth = {
+                        username: this.#options.auth.username,
+                    };    
+                }
+            }
+
+            if ( this.#options.auth.token ) {
+                this.#axiosOptions.headers = {
+                    ...this.#axiosOptions.headers,
+                    'Authorization': `Bearer ${this.#options.auth.token}`,
+                };
+            }
         }
     }
 
