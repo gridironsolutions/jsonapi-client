@@ -2,6 +2,7 @@ import JsonApiModel from './JsonApiModel';
 import JsonApiObject from './JsonApiObject';
 import UntypedResource from './UntypedResource';
 import { JsonApiArgumentError } from '../errors';
+import JsonApiError from './JsonApiError';
 
 /**
  * A JSON:API-compliant document object
@@ -59,6 +60,14 @@ export default class JsonApiDocument extends JsonApiModel {
 
     getData() {
         return this.#data;
+    }
+
+    getFirstError() {
+        if ( Array.isArray( this.#errors ) && this.#errors.length > 0 ) {
+            return this.#errors[0];
+        }
+
+        return null;
     }
 
     getErrors() {
