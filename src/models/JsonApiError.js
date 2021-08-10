@@ -24,6 +24,8 @@ export default class JsonApiError extends JsonApiModel {
     #meta;
     
     constructor( jsonApiError ) {
+        super();
+
         this.#id = jsonApiError.id;
         this.#links = jsonApiError.links;
         this.#status = jsonApiError.status;
@@ -64,5 +66,18 @@ export default class JsonApiError extends JsonApiModel {
 
     getMeta() {
         return this.#meta;
+    }
+
+    toJSON() {
+        return {
+            id: this.#id,
+            links: this.#links,
+            status: this.#status,
+            code: this.#code,
+            title: this.#title,
+            detail: this.#detail,
+            source: this.#source,
+            meta: this.#meta,
+        };
     }
 }

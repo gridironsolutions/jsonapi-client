@@ -118,7 +118,7 @@ export default [
                 keep_classnames: true,
             }),
             execute([
-                'yarn version --patch',
+                'yarn version --patch --no-git-tag-version',
                 'cp ./package.json ./build/package.json',
                 'cp ./README.md ./build/README.md',
                 'printf "{\n  \\"type\\": \\"commonjs\\"\n}" > ./build/commonjs/package.json',
