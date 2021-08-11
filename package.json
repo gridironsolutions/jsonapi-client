@@ -1,6 +1,6 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "JSON:API client",
   "main": "esm/index.js",
   "module": "esm/index.js",
@@ -17,6 +17,7 @@
   "scripts": {
     "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 node node_modules/jest/bin/jest.js",
     "build": "yarn rollup -c",
+    "dev": "yarn rollup -c -w",
     "docs": "npx documentation build src/** -f md -o README.md"
   },
   "dependencies": {
