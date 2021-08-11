@@ -64,38 +64,31 @@ export default class JsonApiClient {
                 'Accept': 'application/vnp.api+json',
             },
         };
+
+        //add authorization to axios
         if ( this.#options.auth ) {
-            this.#axiosOptions.auth = {
-                username: this.#options.auth.username,
-                password: this.#options.auth.password,
-            };
+            if ( this.#options.auth.username ) {
+                if ( this.#options.auth.password ) {
+                    this.#axiosOptions.auth = {
+                        username: this.#options.auth.username,
+                        password: this.#options.auth.password,
+                    };
+                } else {
+                    this.#axiosOptions.auth = {
+                        username: this.#options.auth.username,
+                    };    
+                }
+            }
+
+            if ( this.#options.auth.token ) {
+                this.#axiosOptions.headers = {
+                    ...this.#axiosOptions.headers,
+                    'Authorization': `Bearer ${this.#options.auth.token}`,
+                };
+            }
         }
 
         this.#axiosClient = axios.create( this.#axiosOptions );
-        // this.#axiosClient.interceptors.response.use( async ( res ) => {
-        //     console.log( "1" );
-        //     res.data.TOM = 'neat';
-        //     return res.data;
-        // }, async ( err ) => {
-        //     console.log( "2" );
-        //     const { response: res } = err;
-
-        //     // console.log( "AN ERROR OCCURRED:", err );
-        //     // res.data = {
-        //     //     test: true,
-        //     // };
-
-        //     // return new Promise( ( resolve, reject ) => {
-        //     //     reject( err );
-        //     // });
-        //     // return Promise.reject({
-        //     //     reject: true,
-        //     // });
-
-        //     // return { errors: [ new JsonApiError( 'test' ) ] };
-
-        //     return err;
-        // });
     }
 
     /**
@@ -159,7 +152,6 @@ export default class JsonApiClient {
      */
     async patch( path, resource ) {
         if ( ! resource.getAttributes() ) {
-            // throw new JsonApiError( "Resource does not have any attributes." );
             throw new Error( "Resource does not have any attributes." );
         }
 
