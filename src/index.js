@@ -19,11 +19,13 @@ import JsonApiModel, {
  * @param {number} [options.port=443] - Remote API port
  * @param {string} [options.basepath=] - The root path of the API
  * @param {number} [optoins.timeout=30000] - Client timeout in milliseconds
+ * @param {boolean} [options.debug=false] - Enable debugging
  */
 export default class JsonApiClient {
     #options;
     #baseUrl;
     #axiosOptions;
+    #axiosClient;
 
     constructor( options ) {
         //must be provided an options object
@@ -47,6 +49,7 @@ export default class JsonApiClient {
             port: 443,
             basePath: '',
             timeout: 30000,
+            debug: false,
             ...options
         };
 
@@ -84,6 +87,8 @@ export default class JsonApiClient {
                 };
             }
         }
+
+        this.#axiosClient = axios.create( this.#axiosOptions );
     }
 
     /**
@@ -110,14 +115,27 @@ export default class JsonApiClient {
      * @returns {Promise<JsonApiDocument>}
      */
     async get( path, model = UntypedResource ) {
-        let document = axios.get( this.#baseUrl.concat( path ), this.#axiosOptions )
+        let document = this.#axiosClient.get( this.#baseUrl.concat( path ) )
         .then( ( res ) => {
+            if ( this.#options.debug ) {
+                log.debug( res.data );
+            }
+            
             let document = new JsonApiDocument( res.data, model );
             
             return document;
         })
-        .catch( ( err ) => {
-            this.#handleError( err );
+        .catch( async ( err ) => {
+            await this.#handleError( err );
+            
+            return new JsonApiDocument({
+                errors: [
+                    new JsonApiError({
+                        status: err?.response?.status,
+                        title: err?.response?.statusText,
+                    }),
+                ],
+            }, model );
         })
         .finally( () => {
         });
@@ -134,7 +152,7 @@ export default class JsonApiClient {
      */
     async patch( path, resource ) {
         if ( ! resource.getAttributes() ) {
-            throw new JsonApiError( "Resource does not have any attributes." );
+            throw new Error( "Resource does not have any attributes." );
         }
 
         let reqDocument = resource.toJsonApiDocument();
@@ -145,8 +163,8 @@ export default class JsonApiClient {
 
             return document;
         })
-        .catch( ( err ) => {
-            this.#handleError( err );
+        .catch( async ( err ) => {
+            await this.#handleError( err );
         })
         .finally( () => {
         });
@@ -154,11 +172,14 @@ export default class JsonApiClient {
         return resDocument;
     }
 
-    #handleError( err ) {
+    async #handleError( err ) {
         if ( err.response ) {
             switch ( err.response.status ) {
                 case 401:
                     log.warn( 'Not authorized.');
+                    break;
+                case 403:
+                    log.warn( 'Forbidden' );
                     break;
                 case 404:
                     log.warn( 'Unable to find object.' );
@@ -175,8 +196,6 @@ export default class JsonApiClient {
         } else {
             log.warn( 'An unknown error occurred.' );
         }
-
-        log.warn( err.message );
     }
 }
 
