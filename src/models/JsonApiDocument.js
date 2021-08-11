@@ -52,6 +52,8 @@ export default class JsonApiDocument extends JsonApiModel {
         this.#isValid = true;
         this.#deserialize( model );
         this.#resourceType = model.name;
+
+        // console.log( "new document", this.toJSON() );
     }
 
     getJsonApiObject() {
@@ -121,6 +123,27 @@ export default class JsonApiDocument extends JsonApiModel {
             }
 
             this.#_deserialized = true;
+        // } else if ( this.#errors && ! this.#_deserialized ) {
+        //     if ( Array.isArray( this.#errors ) ) {
+        //         console.log( "this.#errors is an array." );
+
+        //         let errNumber = 0;
+        //         this.#errors = this.#errors.map( ( element ) => {
+        //             errNumber++;
+        //             console.log( "Error number", errNumber );
+
+        //             let error;
+
+        //             // error = new JsonApiError( element );
+        //             error = element;
+
+        //             return error;
+        //         });
+        //     } else {
+        //         this.#errors = new JsonApiError( this.#errors );
+        //     }
+
+        //     this.#_deserialized = true;
         }
 
         return;
