@@ -127,6 +127,7 @@ export default class JsonApiClient {
         })
         .catch( async ( err ) => {
             await this.#handleError( err );
+            log.info( "An error occurred: %s", err );
             
             return new JsonApiDocument({
                 errors: [
