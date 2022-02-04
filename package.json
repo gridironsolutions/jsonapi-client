@@ -1,8 +1,14 @@
 {
   "name": "@gridironsolutions/jsonapi-client",
-  "version": "0.3.4",
+  "version": "1.0.4",
   "description": "JSON:API client",
-  "main": "esm/index.js",
+  "main": "cjs/index.js",
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "default": "./esm/index.js"
+    }
+  },
   "module": "esm/index.js",
   "repository": {
     "url": "https://github.com/gridironsolutions/jsonapi-client",
@@ -11,7 +17,7 @@
   "author": "Tom Voss <tom.voss@gridironsolutions.com>",
   "homepage": "https://github.com/gridironsolutions/jsonapi-client",
   "bugs": "https://github.com/gridironsolutions/jsonapi-client/issues",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "private": false,
   "scripts": {
@@ -21,11 +27,9 @@
     "docs": "npx documentation build src/** -f md -o README.md"
   },
   "dependencies": {
-    "@babel/runtime": "^7.12.13",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
-    "pino": "^6.11.0",
-    "pino-pretty": "^4.5.0"
+    "pino": "^6.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -33,6 +37,7 @@
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.15",
     "@babel/preset-env": "^7.12.11",
+    "@babel/runtime": "^7.17.0",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -45,6 +50,7 @@
     "documentation": "^13.1.1",
     "jest": "^26.6.3",
     "jest-extended": "^0.11.5",
+    "pino-pretty": "^7.5.1",
     "rollup": "^2.39.0",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -52,9 +58,9 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "files": [
-    "@gridironsolutions",
-    "commonjs",
+    "cjs",
     "esm",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ]
 }
