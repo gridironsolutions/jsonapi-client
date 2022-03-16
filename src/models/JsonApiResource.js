@@ -9,6 +9,7 @@ import JsonApiClientError, { JsonApiArgumentError } from '../errors';
  * @param {string} [resource.type]
  * @param {string} [resource.id]
  * @param {Object} [resource.attributes]
+ * @param {Object} [resource.included]
  */
 export default class JsonApiResource extends JsonApiModel {
     #type;
