@@ -14,6 +14,7 @@ export default class JsonApiResource extends JsonApiModel {
     #type;
     #id;
     #attributes;
+    #included;
 
     constructor( resource ) {
         super();
@@ -34,6 +35,7 @@ export default class JsonApiResource extends JsonApiModel {
             this.#type = this.constructor.type;
             this.#id = resource.id;
             this.#attributes = resource.attributes;
+            this.#included = resource.included;
         } else {
             throw new JsonApiArgumentError( "Provided resource is invalid." );
         }
@@ -63,7 +65,8 @@ export default class JsonApiResource extends JsonApiModel {
         return new this({
             type: this.type,
             id,
-            attributes
+            attributes,
+            included,
         });
     }
 
@@ -78,6 +81,7 @@ export default class JsonApiResource extends JsonApiModel {
                 type: this.constructor.type,
                 id: this.#id,
                 attributes: this.#attributes,
+                included: this.#included,
             }
         }, this.constructor );
 
@@ -94,6 +98,10 @@ export default class JsonApiResource extends JsonApiModel {
 
     getAttributes() {
         return this.#attributes;
+    }
+
+    getIncluded() {
+        return this.#included;
     }
 
     toString() {
@@ -115,6 +123,7 @@ export default class JsonApiResource extends JsonApiModel {
             type: this.#type,
             id: this.#id,
             attributes: this.#attributes,
+            included: this.#included,
         };
     }
 }
