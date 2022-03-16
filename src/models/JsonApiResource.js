@@ -9,7 +9,7 @@ import JsonApiClientError, { JsonApiArgumentError } from '../errors';
  * @param {string} [resource.type]
  * @param {string} [resource.id]
  * @param {Object} [resource.attributes]
- * @param {Object} [resource.included]
+ * @param {Object[]} [resource.included]
  */
 export default class JsonApiResource extends JsonApiModel {
     #type;
@@ -47,10 +47,11 @@ export default class JsonApiResource extends JsonApiModel {
      * 
      * @param {string} id 
      * @param {Object} attributes 
+     * @param {Object[]} included
      * 
      * @returns {JsonApiResource}
      */
-    static from( id, attributes ) {
+    static from( id, attributes, included ) {
         if ( ! this.type ) {
             throw new JsonApiClientError( `'${this.name}' class does not define a static 'type'.` );
         }
