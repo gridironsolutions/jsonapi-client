@@ -40,6 +40,7 @@ export default {
         execute([
             'cp ./package.json ./build/package.json',
             'cp ./README.md ./build/README.md',
+            'mkdir -p ./build/cjs',
             'printf "{\n  \\"type\\": \\"commonjs\\"\n}" > ./build/cjs/package.json',
         ]),
     ],

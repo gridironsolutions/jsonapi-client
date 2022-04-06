@@ -34,6 +34,7 @@ JSON:API Client
     -   `options.https` **[string][22]** Is protocol HTTPS or HTTP? (optional, default `true`)
     -   `options.port` **[number][23]** Remote API port (optional, default `443`)
     -   `options.basepath` **[string][22]?** The root path of the API
+    -   `options.debug` **[boolean][24]** Enable debugging (optional, default `false`)
 
 ### getOptions
 
@@ -50,7 +51,7 @@ Fetch remote object and return it as a JsonApiDocument
 -   `path` **[string][22]** 
 -   `model` **[Object][21]**  (optional, default `UntypedResource`)
 
-Returns **[Promise][24]&lt;[JsonApiDocument][25]>** 
+Returns **[Promise][25]&lt;[JsonApiDocument][26]>** 
 
 ### patch
 
@@ -71,11 +72,11 @@ A JSON:API-compliant document object
 
 -   `document` **[Object][21]** 
     -   `document.jsonapi` **[Object][21]**  (optional, default `JsonApiObject.#CURRENT_VERSION`)
-    -   `document.data` **([Object][21] \| [Array][26]&lt;[Object][21]>)?** 
-    -   `document.errors` **[Array][26]&lt;[Object][21]>?** 
+    -   `document.data` **([Object][21] \| [Array][27]&lt;[Object][21]>)?** 
+    -   `document.errors` **[Array][27]&lt;[Object][21]>?** 
     -   `document.meta` **[Object][21]?** 
     -   `document.links` **[Object][21]?** 
-    -   `document.included` **[Array][26]&lt;[Object][21]>?** 
+    -   `document.included` **[Array][27]&lt;[Object][21]>?** 
 -   `model` **[Object][21]**  (optional, default `UntypedResource`)
 
 ## JsonApiError
@@ -129,12 +130,13 @@ A JSON:API-compliant resource object
     -   `resource.type` **[string][22]?** 
     -   `resource.id` **[string][22]?** 
     -   `resource.attributes` **[Object][21]?** 
+    -   `resource.included` **[Object][21]?** 
 
 ### toJsonApiDocument
 
 Wrap this resource in a JsonApiDocument
 
-Returns **[JsonApiDocument][25]** 
+Returns **[JsonApiDocument][26]** 
 
 ### from
 
@@ -145,7 +147,7 @@ Build a new JsonApiResource
 -   `id` **[string][22]** 
 -   `attributes` **[Object][21]** 
 
-Returns **[JsonApiResource][27]** 
+Returns **[JsonApiResource][28]** 
 
 [1]: #jsonapiclient
 
@@ -193,10 +195,12 @@ Returns **[JsonApiResource][27]**
 
 [23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[25]: #jsonapidocument
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
-[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[26]: #jsonapidocument
 
-[27]: #jsonapiresource
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[28]: #jsonapiresource
