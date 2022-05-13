@@ -43,11 +43,11 @@ export default class JsonApiResource extends JsonApiModel {
     }
 
     /**
-     * Build a new JsonApiResource
+     * Build a new JsonApiResource from id, attributes, and included
      * 
      * @param {string} id 
      * @param {Object} attributes 
-     * @param {Object[]} included
+     * @param {Object[]} included 
      * 
      * @returns {JsonApiResource}
      */
@@ -61,7 +61,7 @@ export default class JsonApiResource extends JsonApiModel {
         }
 
         if ( ! attributes ) {
-            throw new JsonApiArgumentError( "Must provide valid attributes." );
+            throw new JsonApiArgumentError( `Must provide valid attributes for '${id}'.` );
         }
 
         return new this({
@@ -70,6 +70,55 @@ export default class JsonApiResource extends JsonApiModel {
             attributes,
             included,
         });
+    }
+
+    /**
+     * Build a new JsonApiResource from an array of objects with id, attributes, and included properties
+     * 
+     * @param {Object[]} [resources]
+     * @param {string} resources[].id 
+     * @param {Object} resources[].attributes 
+     * @param {Object[]} included 
+     * 
+     * @returns {JsonApiResource}
+     */
+    static fromMultiple( resources ) {
+        const typedResources = [];
+
+        if ( ! this.type ) {
+            throw new JsonApiClientError( `'${this.name}' class does not define a static 'type'.` );
+        }
+
+        if ( ! resources || ! Array.isArray( resources ) || resources?.length === 0 ) {
+            throw new JsonApiClientError( "Must provide array of resources." );
+        }
+
+        for ( let i = 0; i < resources?.length; i++ ) {
+            let resource = resources?.[i];
+
+            if ( ! resource?.id ) {
+                throw new JsonApiArgumentError( "Must provide valid id." );
+            }
+    
+            if ( ! resource?.attributes ) {
+                throw new JsonApiArgumentError( `Must provide valid attributes for '${resource?.id}'.` );
+            }    
+
+            let typedResource = new this({
+                type: this.type,
+                id: resource?.id,
+                attributes: resource?.attributes,
+                included: resource?.included,
+            });
+
+            if ( typedResource ) {
+                typedResources.push( typedResource );
+            } else {
+                throw new JsonApiClientError( "An unknown error occurred." );
+            }
+        }
+
+        return typedResources;
     }
 
     /**
