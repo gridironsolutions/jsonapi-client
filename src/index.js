@@ -152,7 +152,7 @@ export default class JsonApiClient {
      * @returns {Promise<JsonApiDocument}
      */
     async patch( path, resource ) {
-        if ( ! resource.getAttributes() ) {
+        if ( ! resource?.getAttributes || ! resource?.getAttributes() ) {
             throw new Error( "Resource does not have any attributes." );
         }
 
@@ -161,6 +161,34 @@ export default class JsonApiClient {
         let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument, this.#axiosOptions )
         .then( ( res ) => {
             let document = new JsonApiDocument( res.data, resource.constructor );
+
+            return document;
+        })
+        .catch( async ( err ) => {
+            await this.#handleError( err );
+        })
+        .finally( () => {
+        });
+
+        return resDocument;
+    }
+
+    /**
+     * Update remote objects
+     * 
+     * @param {string} path 
+     * @param {Object[]} resources
+     * @param {Object} [model=UntypedResource]
+     * @returns {Promise<JsonApiDocument}
+     */
+    async patchMultiple( path, resources, model = UntypedResource ) {
+        const reqDocument = new JsonApiDocument({
+            data: resources,
+        }, model );
+
+        let resDocument = await axios.patch( this.#baseUrl.concat( path ), reqDocument, this.#axiosOptions )
+        .then( ( res ) => {
+            let document = new JsonApiDocument( res.data, model );
 
             return document;
         })
