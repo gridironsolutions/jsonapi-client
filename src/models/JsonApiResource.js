@@ -21,6 +21,15 @@ export default class JsonApiResource extends JsonApiModel {
         super();
 
         if ( resource ) {
+            if ( resource instanceof this.constructor ) {
+                this.#type = JSON.parse( JSON.stringify( resource?.getType() ) );
+                this.#id = JSON.parse( JSON.stringify( resource?.getId() ) );
+                this.#attributes = JSON.parse( JSON.stringify( resource?.getAttributes() ) );
+                this.#included = JSON.parse( JSON.stringify( resource?.getIncluded() ) );
+
+                return;
+            }
+
             if ( ! this.constructor.type ) {
                 throw new JsonApiArgumentError( "Implementing class must set a 'type' property." );
             }

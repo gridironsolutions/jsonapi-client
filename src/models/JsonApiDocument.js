@@ -43,17 +43,15 @@ export default class JsonApiDocument extends JsonApiModel {
             throw new JsonApiArgumentError( "Provided document is invalid. `data` must be present if `included` is present." );
         }
 
-        this.#jsonapi = document.jsonapi ? document.jsonapi : new JsonApiObject();
-        this.#data = document.data;
-        this.#errors = document.errors;
-        this.#meta = document.meta;
-        this.#links = document.links;
-        this.#included = document.included;
+        this.#jsonapi = document.jsonapi ? JSON.parse( JSON.stringify( document.jsonapi ) ) : new JsonApiObject();
+        this.#data = JSON.parse( JSON.stringify( document.data ) );
+        this.#errors = JSON.parse( JSON.stringify( document.errors ) );
+        this.#meta = JSON.parse( JSON.stringify( document.meta ) );
+        this.#links = JSON.parse( JSON.stringify( document.links ) );
+        this.#included = JSON.parse( JSON.stringify( document.included ) );
         this.#isValid = true;
         this.#deserialize( model );
         this.#resourceType = model.name;
-
-        // console.log( "new document", this.toJSON() );
     }
 
     getJsonApiObject() {
