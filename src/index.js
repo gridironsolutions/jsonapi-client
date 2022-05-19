@@ -166,6 +166,15 @@ export default class JsonApiClient {
         })
         .catch( async ( err ) => {
             await this.#handleError( err );
+
+            return new JsonApiDocument({
+                errors: [
+                    new JsonApiError({
+                        status: err?.response?.status,
+                        title: err?.response?.statusText,
+                    }),
+                ],
+            }, model );
         })
         .finally( () => {
         });
@@ -194,6 +203,15 @@ export default class JsonApiClient {
         })
         .catch( async ( err ) => {
             await this.#handleError( err );
+
+            return new JsonApiDocument({
+                errors: [
+                    new JsonApiError({
+                        status: err?.response?.status,
+                        title: err?.response?.statusText,
+                    }),
+                ],
+            }, model );
         })
         .finally( () => {
         });
